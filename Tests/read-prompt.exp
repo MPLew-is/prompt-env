@@ -1,0 +1,50 @@
+#!/usr/bin/env expect
+##
+## Puppet a generic program that makes us of `read -p` (or similar) calls, emulating a terminal so that the prompt strings are actually displayed.
+##
+## @author [Mike Lewis](mailto:mike@mplew.is)
+## @date 2020-07-13
+##
+## Passes `stdin` to the called program line-by-line and passes the program's output to `stdout`.
+## This script is designed for use with `prompt-env`, but it blindly runs whatever arguments are given to it as a program and so could probably be used to run other similar scripts with user prompting.
+## One thing to note is that `expect` cannot easily distinguish between `stdout` and `stderr` from the `spawn`ed program, and so the prompts that normally would be output over `stderr` will be lumped together on `stdout` with any other output from the program.
+## Additionally, `expect` outputs a bunch of control characters that will need to be cleaned up before, for instance, `diff`ing the output as part of a test; `tr -d '\b\r'` successfully stripped all the characters found during development.
+##
+## Usage:
+## ```sh
+## ./read-prompt.exp {program} {arguments...}
+## ```
+
+# "Splat" the arguments list as the program to execute, with options:
+# - `-noecho`: don't echo the commands sent to this process, as we don't want to pollute test output comparsion.
+# - `-nottyinit`: don't attempt to change tty settings when spawning, as this seems to somehow route through a shell process and print the command run when the calling script is operating under `set -x`.
+#     - This is especially relevant when running under `bashcov`, which uses `set -x` to track which lines have been executed.
+#     - Moreover, whatever shell is running that command does not seem to obey `BASH_XTRACEFD`, meaning that the output is printed to `stderr` and ends up becoming part of the test output instead of being picked up by `bashcov` (which wouldn't know what to do with it anyway).
+#     - Turning this off doesn't seem to noticeably affect the rest of the test and gets rid of all those problems.
+spawn -noecho -nottyinit {*}${argv}
+
+# Wait for the standard `{prompt}: ` string, then send a line of `stdin`.
+expect {
+	# Ignore anything that completes a line after what would otherwise be identified as a prompt.
+	# This helps prevent the script from hanging when normal input contains a colon.
+	"*: *\n" {
+		exp_continue
+	}
+	"*: " {
+		# It appears that `read -s` prints the prompt and then sets whatever TTY settings are needed to hide input, meaning that there's a race condition here between that setting and the sending of input which can result in the input being printed to the terminal and thus end up in the test output.
+		# This fix (waiting for 1 millisecond) is a little hacky, but should be plenty of time for `read` to make whatever changes it needs to so we don't end up with flakiness around "secure" input showing up in the output during interactive tests.
+		after 2
+		if { [gets stdin line] != -1 } {
+			send "${line}\n"
+			exp_continue
+		}
+	}
+}
+
+# Block until the program exits but ignore errors.
+# This will raise an exception if the program has temrinated itself before we get to this point but that's perfectly acceptable behavior.
+catch expect eof
+
+# Capture and exit with the return code of the `spawned` program.
+catch wait result
+exit [lindex $result 3]

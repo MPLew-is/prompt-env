@@ -1,0 +1,9 @@
+# Ignore Homebrew "lock" file.
+# This doesn't actually perform the same role as a normal lock file (which allows you to install the exact same dependencies for reproducibility), it just notes down the last good installation since Homebrew doesn't really have a concept of installing a previous version.
+/Brewfile.lock.json
+
+# Ignore the generated coverage data directory.
+.coverage
+
+# Ignore the generated build arifacts directory.
+.build
