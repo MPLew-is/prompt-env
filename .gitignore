@@ -3,7 +3,7 @@
 /Brewfile.lock.json
 
 # Ignore the generated coverage data directory.
-.coverage
+/.coverage
 
 # Ignore the generated build arifacts directory.
-.build
+/.build
