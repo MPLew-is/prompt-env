@@ -2,8 +2,8 @@
 ##
 ## Prompt user for variable values, outputting them in .env format (which is also shell-compatible).
 ##
-## @author Mike Lewis <mike@mplew.is>
-## @date 2020-07-05
+## - Author: Mike Lewis <mike@mplew.is>
+## - Date: 2020-07-05
 ##
 ## This script is useful to, for instance, request authentication information from a user during scripted setup of a project and output that information in a common format without the user having to manually edit files.
 ## Will also read the requested values from environment variables (with the same name as the variable name on the command-line), to minimize user prompting if already set in the user's profile, for instance.

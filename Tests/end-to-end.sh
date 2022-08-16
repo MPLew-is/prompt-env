@@ -2,8 +2,8 @@
 ##
 ## Test the end-to-end functionality of `prompt-env` using `shunit2`, ensuring correct prompting and variable parsing behavior.
 ##
-## @author [Mike Lewis](mailto:mike@mplew.is)
-## @date 2020-07-13
+## - Author: Mike Lewis <mike@mplew.is>
+## - Date: 2020-07-13
 ##
 ## Usage:
 ## ```sh
