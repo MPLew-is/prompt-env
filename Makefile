@@ -13,12 +13,12 @@
 ##
 ## This file is primarily a convenience for interactive usage, and as such does not have a public API for integrating with other scripts.
 ## However, the current targets and their functions are provided below:
-## - setup                  : install all needed dependecies for running checks
-## - test                   : run all tests of the `prompt-env.sh` script
+## - setup:                   install all needed dependecies for running checks
+## - test:                    run all tests of the `prompt-env.sh` script
 ## - coverage-json, coverage: generate the JSON coverage report, exiting with a failure code if not 100% covered
-## - coverage-html          : generate the HTML coverage report and open it with the system-registered program
-## - lint                   : run all lint checks of the `prompt-env.sh` script
-## - clean, clean-all       : remove all generated files
+## - coverage-html:           generate the HTML coverage report and open it with the system-registered program
+## - lint:                    run all lint checks of the `prompt-env.sh` script
+## - clean, clean-all:        remove all generated files
 
 # Don't do anything by default, as there's nothing to "build" here.
 .PHONY: default
